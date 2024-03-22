@@ -8,7 +8,13 @@ import {
   passwordValidation,
   usernameValidation,
 } from "../utils/validators.js";
-import { generateToken, options } from "../utils/generateToken.js";
+import {
+  generateAccessRefreshToken,
+  generateVerificationToken,
+  options,
+  generate20CharToken,
+} from "../utils/generateToken.js";
+import { sendVerificationCodeEmail } from "../configs/email.config.js";
 
 // Register Controller
 export const registerController = asyncHandler(async (req, res) => {
@@ -34,6 +40,7 @@ export const registerController = asyncHandler(async (req, res) => {
     fullName,
     password,
   });
+
   // Check if user is created
   const user = await User.findById(createdUser._id).select(
     "-password -refreshToken"
@@ -41,6 +48,11 @@ export const registerController = asyncHandler(async (req, res) => {
   if (!user) {
     throw new ApiError(500, "Error creating user, Please try again!");
   }
+
+  // Save Verification Code
+  const token = generate20CharToken();
+  generateVerificationToken(user._id, token);
+  sendVerificationCodeEmail(user.email, token);
 
   // Sending RESPONSE
   return res.status(201).json(new ApiResponse(200, user, "User registered!"));
@@ -68,7 +80,9 @@ export const loginController = asyncHandler(async (req, res) => {
   }
 
   // Generate Token
-  const { accessToken, refreshToken } = await generateToken(user._id);
+  const { accessToken, refreshToken } = await generateAccessRefreshToken(
+    user._id
+  );
   const loggedInUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );

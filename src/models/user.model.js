@@ -28,6 +28,9 @@ const UserSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
     },
+    verificationToken: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
@@ -57,7 +60,7 @@ UserSchema.methods.generateAccessToken = function () {
   );
 };
 
-// Generatin Refresh Token Method
+// Generating Refresh Token Method
 UserSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
