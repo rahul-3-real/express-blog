@@ -134,10 +134,17 @@ export const verifyAccountController = asyncHandler(async (req, res) => {
   const user = await User.findOne({ verificationToken: token });
   if (!user) throw new ApiError(404, "User not found or is already verified");
 
+  // Check if the token is expired
+  const currentDate = new Date();
+  if (currentDate > user.verificationTokenExpiry) {
+    throw new ApiError(400, "Verification token has expired");
+  }
+
   // Verify User
   try {
     user.verified = true;
     user.verificationToken = undefined;
+    user.verificationTokenExpiry = undefined;
     await user.save();
   } catch (error) {
     throw new ApiError(500, `Error while verifying your account :: ${error}`);
