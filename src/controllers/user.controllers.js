@@ -123,3 +123,33 @@ export const logoutController = asyncHandler(async (req, res) => {
     .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, {}, "User logged out"));
 });
+
+// Verify Account Controller
+export const verifyAccountController = asyncHandler(async (req, res) => {
+  // Getting code from Parameter
+  const { token } = req.query;
+  if (!token) throw new ApiError(400, "Verification token is missing");
+
+  // Get Account associated with the token
+  const user = await User.findOne({ verificationToken: token });
+  if (!user) throw new ApiError(404, "User not found or is already verified");
+
+  // Verify User
+  try {
+    user.verified = true;
+    user.verificationToken = undefined;
+    await user.save();
+  } catch (error) {
+    throw new ApiError(500, `Error while verifying your account :: ${error}`);
+  }
+
+  // Check if user is created
+  const verifiedUser = await User.findById(user._id).select(
+    "-password -refreshToken"
+  );
+
+  // Sending RESPONSE
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { user: verifiedUser }, "Account Verified!"));
+});
