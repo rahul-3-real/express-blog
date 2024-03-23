@@ -153,3 +153,39 @@ export const verifyAccountController = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, { user: verifiedUser }, "Account Verified!"));
 });
+
+// Reset Password Controller
+export const resetPasswordController = asyncHandler(async (req, res) => {
+  // Get data from frontend
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+
+  // Validate Fields
+  notEmptyValidation([oldPassword, newPassword, confirmPassword]);
+
+  // Check if old password matches
+  const user = await User.findById(req.user._id);
+  const passwordCheck = await user.isPasswordCorrect(oldPassword);
+  if (!passwordCheck) {
+    throw new ApiError(401, "Invalid old password");
+  }
+
+  // Check if passwords match
+  passwordValidation(newPassword);
+  if (newPassword !== confirmPassword) {
+    throw new ApiError(400, "Passwords do not match");
+  }
+
+  // New Password should not be equal to old password
+  if (newPassword === oldPassword) {
+    throw new ApiError(400, "New password cannot be same as old password");
+  }
+
+  // Update Password
+  user.password = newPassword;
+  await user.save();
+
+  // Sending RESPONSE
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password reset successfully!"));
+});
