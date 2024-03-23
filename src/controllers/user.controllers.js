@@ -161,6 +161,36 @@ export const verifyAccountController = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { user: verifiedUser }, "Account Verified!"));
 });
 
+// Resend Verify Account Link Controller
+export const resendVerifyAccountLinkController = asyncHandler(
+  async (req, res) => {
+    // Get Email from frontend
+    const { email } = req.body;
+
+    // Validate Field
+    notEmptyValidation([email]);
+    emailValidation(email);
+
+    // Check if user Exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new ApiError(404, "User with this email does not exist");
+    }
+
+    if (user.verified) throw new ApiError(404, "User is already verified");
+
+    // Generate Token
+    const token = generate20CharToken();
+    generateVerificationToken(user._id, token);
+    sendVerificationCodeEmail(user.email, token);
+
+    // Sending RESPONSE
+    return res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Verification link sent to your email"));
+  }
+);
+
 // Reset Password Controller
 export const resetPasswordController = asyncHandler(async (req, res) => {
   // Get data from frontend
