@@ -47,8 +47,7 @@ export const isUserVerified = asyncHandler(async (req, res, next) => {
   }
 });
 
-// Check if theuser is an Author
-
+// Check if the user is an Author
 export const isAuthor = asyncHandler(async (req, res, next) => {
   try {
     const user = req.user;

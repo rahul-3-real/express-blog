@@ -25,12 +25,18 @@ const UserSchema = new mongoose.Schema(
     password: {
       type: String,
     },
-    refreshToken: {
-      type: String,
-    },
     verified: {
       type: Boolean,
       default: false,
+    },
+    avatar: {
+      type: String,
+    },
+    coverImage: {
+      type: String,
+    },
+    refreshToken: {
+      type: String,
     },
     verificationToken: {
       type: String,

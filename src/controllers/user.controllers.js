@@ -309,3 +309,43 @@ export const becomeAuthorController = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, user, "You are now an author!"));
 });
+
+// Upload Avatar Image Controller
+export const uploadAvatarImageController = asyncHandler(async (req, res) => {
+  // Get file from frontend
+  let localPath;
+  if (!req.file) throw new ApiError(400, "Please upload a file");
+  localPath = req.file?.path;
+
+  // Upload file
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    { $set: { avatar: localPath } },
+    { new: true }
+  ).select("-password -refreshToken");
+
+  // Sending RESPONSE
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Avatar image uploaded successfully!"));
+});
+
+// Upload Cover Image Controller
+export const uploadCoverImageController = asyncHandler(async (req, res) => {
+  // Get file from frontend
+  let localPath;
+  if (!req.file) throw new ApiError(400, "Please upload a file");
+  localPath = req.file?.path;
+
+  // Upload file
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    { $set: { coverImage: localPath } },
+    { new: true }
+  ).select("-password -refreshToken");
+
+  // Sending RESPONSE
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Cover image uploaded successfully!"));
+});
