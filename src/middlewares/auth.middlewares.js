@@ -46,3 +46,18 @@ export const isUserVerified = asyncHandler(async (req, res, next) => {
     throw new ApiError(400, error?.message);
   }
 });
+
+// Check if theuser is an Author
+
+export const isAuthor = asyncHandler(async (req, res, next) => {
+  try {
+    const user = req.user;
+    if (user.role !== "author") {
+      throw new ApiError(400, "You are not an Author");
+    }
+
+    next();
+  } catch (error) {
+    throw new ApiError(400, error?.message);
+  }
+});
