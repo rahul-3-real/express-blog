@@ -37,7 +37,12 @@ const UserSchema = new mongoose.Schema(
     },
     verificationTokenExpiry: {
       type: Date,
-      default: () => new Date(+new Date() + 24 * 60 * 60 * 1000),
+    },
+    passwordResetToken: {
+      type: String,
+    },
+    passwordResetTokenExpiry: {
+      type: Date,
     },
   },
   { timestamps: true }

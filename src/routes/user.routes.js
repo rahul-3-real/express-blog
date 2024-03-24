@@ -1,5 +1,7 @@
 import { Router } from "express";
 import {
+  forgotPasswordController,
+  forgotPasswordRequestController,
   loginController,
   logoutController,
   registerController,
@@ -17,5 +19,7 @@ router.route("/logout").post(verifyJWT, logoutController);
 router.route("/verify-account").get(verifyAccountController);
 router.route("/resend-verify-account").post(resendVerifyAccountLinkController);
 router.route("/reset-password").post(verifyJWT, resetPasswordController);
+router.route("/forgot-password").post(forgotPasswordController);
+router.route("/forgot-password-request").post(forgotPasswordRequestController);
 
 export default router;

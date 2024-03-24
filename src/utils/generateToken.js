@@ -45,6 +45,22 @@ export const generateVerificationToken = async (userId, token) => {
   try {
     const user = await User.findById(userId);
     user.verificationToken = token;
+    user.verificationTokenExpiry = new Date(+new Date() + 24 * 60 * 60 * 1000);
+    await user.save({ validateBeforeSave: true });
+  } catch (error) {
+    throw new ApiError(
+      500,
+      `Something went wrong while generating token :: ${error}`
+    );
+  }
+};
+
+// Generate Password Reset Token
+export const generatePasswordResetToken = async (userId, token) => {
+  try {
+    const user = await User.findById(userId);
+    user.passwordResetToken = token;
+    user.passwordResetTokenExpiry = new Date(+new Date() + 24 * 60 * 60 * 1000);
     await user.save({ validateBeforeSave: true });
   } catch (error) {
     throw new ApiError(

@@ -13,8 +13,12 @@ import {
   generateVerificationToken,
   options,
   generate20CharToken,
+  generatePasswordResetToken,
 } from "../utils/generateToken.js";
-import { sendVerificationCodeEmail } from "../configs/email.config.js";
+import {
+  sendPasswordResetEmail,
+  sendVerificationCodeEmail,
+} from "../configs/email.config.js";
 
 // Register Controller
 export const registerController = asyncHandler(async (req, res) => {
@@ -226,3 +230,68 @@ export const resetPasswordController = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, {}, "Password reset successfully!"));
 });
+
+// Forgot Password Controller
+export const forgotPasswordController = asyncHandler(async (req, res) => {
+  // Get Email from frontend
+  const { email } = req.body;
+
+  // Check if teh field is valid
+  notEmptyValidation([email]);
+  emailValidation(email);
+
+  // Check if user Exists
+  const user = await User.findOne({ email });
+  if (!user) throw new ApiError(404, "User with this email does not exist");
+
+  // Generate Token
+  const token = generate20CharToken();
+  generatePasswordResetToken(user._id, token);
+  sendPasswordResetEmail(user.email, token);
+
+  // Sending RESPONSE
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password reset link sent to your email"));
+});
+
+// Forgot Password Request Controller
+export const forgotPasswordRequestController = asyncHandler(
+  async (req, res) => {
+    // Get token from url
+    const { token } = req.query;
+
+    // Check if token is valid
+    const user = await User.findOne({ passwordResetToken: token });
+    if (!user) {
+      throw new ApiError(404, "Password reset request is invalid");
+    }
+
+    const currentDate = new Date();
+    if (currentDate > user.passwordResetTokenExpiry) {
+      throw new ApiError(400, "Password reset token has expired");
+    }
+
+    // Get data from frontend
+    const { newPassword, confirmPassword } = req.body;
+
+    // Validate Fields
+    notEmptyValidation([newPassword, confirmPassword]);
+    passwordValidation(newPassword);
+
+    if (newPassword !== confirmPassword) {
+      throw new ApiError(400, "Password does not match");
+    }
+
+    // Update Password
+    user.password = newPassword;
+    user.passwordResetToken = undefined;
+    user.passwordResetTokenExpiry = undefined;
+    await user.save();
+
+    // Sending RESPONSE
+    return res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Password reset successfully!"));
+  }
+);
