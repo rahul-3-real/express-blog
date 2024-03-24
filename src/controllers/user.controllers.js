@@ -295,3 +295,17 @@ export const forgotPasswordRequestController = asyncHandler(
       .json(new ApiResponse(200, {}, "Password reset successfully!"));
   }
 );
+
+// Become an Author Controller
+export const becomeAuthorController = asyncHandler(async (req, res) => {
+  // Get User from request and update role
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { role: "author" },
+    { new: true }
+  );
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "You are now an author!"));
+});

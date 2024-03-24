@@ -3,6 +3,7 @@ import ApiError from "../utils/apiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import User from "../models/user.model.js";
 
+// Verify that the user is authenticated
 export const verifyJWT = asyncHandler(async (req, res, next) => {
   try {
     const token =
@@ -26,5 +27,22 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
     next();
   } catch (error) {
     throw new ApiError(401, error?.message || "Invalid access token");
+  }
+});
+
+// Check if the user is verified
+export const isUserVerified = asyncHandler(async (req, res, next) => {
+  try {
+    const user = req.user;
+    if (!user.verified) {
+      throw new ApiError(
+        400,
+        `Please verify your account before changing the role`
+      );
+    }
+
+    next();
+  } catch (error) {
+    throw new ApiError(400, error?.message);
   }
 });
