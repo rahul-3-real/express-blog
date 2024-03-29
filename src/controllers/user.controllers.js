@@ -364,3 +364,51 @@ export const getUserProfile = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, user, "User profile fetched successfully!"));
 });
+
+// Update User Profile
+export const updateUserProfile = asyncHandler(async (req, res) => {
+  // Get data from frontend
+  const { email, username, fullName } = req.body;
+
+  const updatedUserDetail = {};
+
+  // Check if email is provided and exists in database
+  if (email) {
+    const emailExists = await User.findOne({ email });
+    if (emailExists && emailExists?.email !== req.user.email) {
+      throw new ApiError(400, "Email already exists");
+    }
+    emailValidation(email);
+    updatedUserDetail.email = email;
+  } else {
+    updatedUserDetail.email = req.user.email;
+  }
+
+  // Check if username is provided and exists in database
+  if (username) {
+    const usernameExists = await User.findOne({ username });
+    if (usernameExists && usernameExists?.username !== req.user.username) {
+      throw new ApiError(400, "Username already exists");
+    }
+    usernameValidation(username);
+    updatedUserDetail.username = username;
+  } else {
+    updatedUserDetail.username = req.user.username;
+  }
+
+  // Update User
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: {
+        email: updatedUserDetail.email,
+        username: updatedUserDetail.username,
+        fullName,
+      },
+    },
+    { new: true }
+  ).select("-password -refreshToken");
+
+  // Sending RESPONSE
+  res.status(200).json(new ApiResponse(200, user, "User details updated"));
+});

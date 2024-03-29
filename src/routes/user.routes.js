@@ -9,6 +9,7 @@ import {
   registerController,
   resendVerifyAccountLinkController,
   resetPasswordController,
+  updateUserProfile,
   uploadAvatarImageController,
   uploadCoverImageController,
   verifyAccountController,
@@ -45,5 +46,6 @@ router
     uploadCoverImageController
   );
 router.route("/profile/:username").get(getUserProfile);
+router.route("/update-profile").patch(verifyJWT, updateUserProfile);
 
 export default router;
