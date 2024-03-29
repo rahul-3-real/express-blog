@@ -3,6 +3,7 @@ import {
   becomeAuthorController,
   forgotPasswordController,
   forgotPasswordRequestController,
+  getUserProfile,
   loginController,
   logoutController,
   registerController,
@@ -43,5 +44,6 @@ router
     verifyJWT,
     uploadCoverImageController
   );
+router.route("/profile/:username").get(getUserProfile);
 
 export default router;

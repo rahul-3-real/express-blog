@@ -349,3 +349,18 @@ export const uploadCoverImageController = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, user, "Cover image uploaded successfully!"));
 });
+
+// Get User Profile
+export const getUserProfile = asyncHandler(async (req, res) => {
+  // Get Username from Params
+  const { username } = req.params;
+
+  // Check if username exists
+  const user = await User.findOne({ username });
+  if (!user) throw new ApiError(404, "User not found");
+
+  // Sending RESPONSE
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "User profile fetched successfully!"));
+});
