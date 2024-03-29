@@ -27,19 +27,19 @@ router.route("/register").post(registerController);
 router.route("/login").post(loginController);
 router.route("/logout").post(verifyJWT, logoutController);
 router.route("/verify-account").get(verifyAccountController);
-router.route("/resend-verify-account").post(resendVerifyAccountLinkController);
+router.route("/resend-verify-account").patch(resendVerifyAccountLinkController);
 router.route("/forgot-password").post(forgotPasswordController);
-router.route("/forgot-password-request").post(forgotPasswordRequestController);
-router.route("/reset-password").post(verifyJWT, resetPasswordController);
+router.route("/forgot-password-request").patch(forgotPasswordRequestController);
+router.route("/reset-password").patch(verifyJWT, resetPasswordController);
 router
-  .route("/change-role")
-  .post(verifyJWT, isUserVerified, becomeAuthorController);
+  .route("/become-author")
+  .patch(verifyJWT, isUserVerified, becomeAuthorController);
 router
   .route("/upload-avatar")
-  .post(avatarUpload.single("avatar"), verifyJWT, uploadAvatarImageController);
+  .patch(avatarUpload.single("avatar"), verifyJWT, uploadAvatarImageController);
 router
-  .route("/upload-cove-image")
-  .post(
+  .route("/upload-cover-image")
+  .patch(
     coverImageUpload.single("coverImage"),
     verifyJWT,
     uploadCoverImageController
