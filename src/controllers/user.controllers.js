@@ -350,7 +350,37 @@ export const uploadCoverImageController = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "Cover image uploaded successfully!"));
 });
 
-// Get User Profile
+// Remove Avatar Image Controller
+export const removeAvatarImageController = asyncHandler(async (req, res) => {
+  // Get User from request and update role
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { $unset: { avatar: "" } },
+    { new: true }
+  );
+
+  // Sending RESPONSE
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Avatar image removed successfully!"));
+});
+
+// Remove Cover Image Controller
+export const removeCoverImageController = asyncHandler(async (req, res) => {
+  // Get User from request and update role
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { $unset: { coverImage: "" } },
+    { new: true }
+  );
+
+  // Sending RESPONSE
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Cover image removed successfully!"));
+});
+
+// Get User Profile Controller
 export const getUserProfile = asyncHandler(async (req, res) => {
   // Get Username from Params
   const { username } = req.params;
@@ -365,7 +395,7 @@ export const getUserProfile = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "User profile fetched successfully!"));
 });
 
-// Update User Profile
+// Update User Profile Controller
 export const updateUserProfile = asyncHandler(async (req, res) => {
   // Get data from frontend
   const { email, username, fullName } = req.body;

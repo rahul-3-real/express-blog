@@ -7,6 +7,8 @@ import {
   loginController,
   logoutController,
   registerController,
+  removeAvatarImageController,
+  removeCoverImageController,
   resendVerifyAccountLinkController,
   resetPasswordController,
   updateUserProfile,
@@ -38,6 +40,7 @@ router
 router
   .route("/upload-avatar")
   .patch(avatarUpload.single("avatar"), verifyJWT, uploadAvatarImageController);
+router.route("/remove-avatar").patch(verifyJWT, removeAvatarImageController);
 router
   .route("/upload-cover-image")
   .patch(
@@ -45,6 +48,9 @@ router
     verifyJWT,
     uploadCoverImageController
   );
+router
+  .route("/remove-cover-image")
+  .patch(verifyJWT, removeCoverImageController);
 router.route("/profile/:username").get(getUserProfile);
 router.route("/update-profile").patch(verifyJWT, updateUserProfile);
 
