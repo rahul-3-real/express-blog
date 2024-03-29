@@ -6,9 +6,11 @@ import {
   getUserProfile,
   loginController,
   logoutController,
+  refreshAccessTokenController,
   registerController,
   removeAvatarImageController,
   removeCoverImageController,
+  removeUserController,
   resendVerifyAccountLinkController,
   resetPasswordController,
   updateUserProfile,
@@ -53,5 +55,7 @@ router
   .patch(verifyJWT, removeCoverImageController);
 router.route("/profile/:username").get(getUserProfile);
 router.route("/update-profile").patch(verifyJWT, updateUserProfile);
+router.route("/remove-profile").delete(verifyJWT, removeUserController);
+router.route("/refresh-access-token").post(refreshAccessTokenController);
 
 export default router;
