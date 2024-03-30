@@ -34,6 +34,19 @@ export const createTagController = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, tag, "Tag created successfully!"));
 });
 
+// Get Single Tag Controller
+export const getTagController = asyncHandler(async (req, res) => {
+  // Get tag
+  const tagId = req.params._id;
+  const tag = await Tag.findById(tagId);
+  if (!tag) throw new ApiError(404, "Tag not found");
+
+  // Sending RESPONSE
+  return res
+    .status(200)
+    .json(new ApiResponse(200, tag, "Tag detail fetched successfully!"));
+});
+
 // Update Tag Controller
 export const updateTagController = asyncHandler(async (req, res) => {
   // Get tag that needs to be updated
@@ -76,4 +89,20 @@ export const updateTagController = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, updatedTag, "Tag updated successfully!"));
+});
+
+// Delete Tag Controller
+export const deleteTagController = asyncHandler(async (req, res) => {
+  // Get tag
+  const tagId = req.params._id;
+  const tag = await Tag.findById(tagId);
+  if (!tag) throw new ApiError(404, "Tag not found");
+
+  // Delete tag
+  await Tag.findByIdAndDelete(tagId);
+
+  // Sending RESPONSE
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Deleted", "Tag deleted successfully!"));
 });
