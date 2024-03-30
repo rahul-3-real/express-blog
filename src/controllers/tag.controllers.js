@@ -7,7 +7,7 @@ import { notEmptyValidation } from "../utils/validators.js";
 // Get Tags Controller
 export const getTagsController = asyncHandler(async (req, res) => {
   const tags = await Tag.find();
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, tags, "Tags fetched successfully!"));
 });
@@ -29,5 +29,51 @@ export const createTagController = asyncHandler(async (req, res) => {
   const tag = await Tag.create({ title, description, user: user._id });
 
   // Sending RESPONSE
-  res.status(201).json(new ApiResponse(201, tag, "Tag created successfully!"));
+  return res
+    .status(201)
+    .json(new ApiResponse(201, tag, "Tag created successfully!"));
+});
+
+// Update Tag Controller
+export const updateTagController = asyncHandler(async (req, res) => {
+  // Get tag that needs to be updated
+  const tagId = req.params._id;
+  const tag = await Tag.findById(tagId);
+  if (!tag) throw new ApiError(404, "Tag not found");
+
+  // Get data from frontend
+  const { title, description } = req.body;
+
+  const updatedTagDetails = {};
+
+  // Validate data
+  if (title) {
+    const titleExists = await Tag.findOne({ title });
+    if (titleExists && titleExists?.title !== tag.title) {
+      throw new ApiError(400, "Tag already exists");
+    }
+    updatedTagDetails.title = title;
+  } else {
+    updatedTagDetails.title = tag.title;
+  }
+
+  if (description) {
+    updatedTagDetails.description = description;
+  } else {
+    updatedTagDetails.description = tag.description;
+  }
+
+  // Update tag details
+  const updatedTag = await Tag.findByIdAndUpdate(
+    tagId,
+    {
+      $set: updatedTagDetails,
+    },
+    { new: true }
+  );
+
+  // Send RESPONSE
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedTag, "Tag updated successfully!"));
 });

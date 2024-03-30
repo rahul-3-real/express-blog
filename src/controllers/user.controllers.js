@@ -441,7 +441,9 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
   ).select("-password -refreshToken");
 
   // Sending RESPONSE
-  res.status(200).json(new ApiResponse(200, user, "User details updated"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "User details updated"));
 });
 
 // Remove User Controller
