@@ -8,6 +8,10 @@ const CategorySchema = new mongoose.Schema(
       unique: true,
     },
     description: String,
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   { timestamps: true }
 );
