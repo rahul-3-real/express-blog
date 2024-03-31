@@ -12,11 +12,34 @@ const PostSchema = new mongoose.Schema(
       ref: "Category",
       default: "uncategorized",
     },
-    tags: {
+    tags: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
+      },
+    ],
+    user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Tag",
+      ref: "User",
     },
-    description: String,
+    description: {
+      type: String,
+      required: true,
+    },
+    excerpt: {
+      type: String,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    isPublic: {
+      type: Boolean,
+      default: true,
+    },
+    featuredImage: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

@@ -31,3 +31,9 @@
 5. Remove Category (Done)
 
 <!-- Creating Post -->
+
+1. Get Posts (Done)
+2. Get Single Post (Done)
+3. Add Post
+4. Update Post
+5. Remove Post
