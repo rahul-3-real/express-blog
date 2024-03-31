@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import userRoutes from "../routes/user.routes.js";
 import tagRoutes from "../routes/tag.routes.js";
 import categoryRoutes from "../routes/category.routes.js";
+import postRoutes from "../routes/post.routes.js";
 
 const app = express();
 
@@ -15,7 +16,8 @@ app.use(express.static("public"));
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/tags", tagRoutes);
-app.use("/api/category", categoryRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/posts", postRoutes);
 
 // Test Route
 app.get("/api", (req, res) => {

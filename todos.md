@@ -24,8 +24,10 @@
 
 <!-- CATEGORY Todos -->
 
-1. Get Categories
-2. Get Single Category
-3. Add Category
-4. Update Category
-5. Remove Category
+1. Get Categories (Done)
+2. Get Single Category (Done)
+3. Add Category (Done)
+4. Update Category (Done)
+5. Remove Category (Done)
+
+<!-- Creating Post -->
