@@ -32,16 +32,9 @@ export const getPostController = asyncHandler(async (req, res) => {
 export const createPostController = asyncHandler(async (req, res) => {
   // Get data from frontend
   const user = req.user;
-  const {
-    title,
-    category,
-    tags,
-    description,
-    excerpt,
-    isActive,
-    isPublic,
-    featuredImage,
-  } = req.body;
+  const { title, category, tags, description, excerpt, isActive, isPublic } =
+    req.body;
+  const featuredImage = req.file?.path;
 
   // Validate fields
   notEmptyValidation([title, description, excerpt]);
@@ -77,7 +70,80 @@ export const createPostController = asyncHandler(async (req, res) => {
 });
 
 // Update Post Controller
-export const updatePostController = asyncHandler(async (req, res) => {});
+export const updatePostController = asyncHandler(async (req, res) => {
+  // Get data from frontend
+  const { title, category, tags, description, excerpt, isActive, isPublic } =
+    req.body;
+  const postId = req.params._id;
+  const user = req.user;
+  const featuredImage = req.file?.path;
+
+  // Get Post
+  const post = await Post.findById(postId);
+
+  // Validate Posts
+  const updatedPost = {};
+
+  if (title) {
+    if (title !== post.title) {
+      // Check if the new title exists in old ones
+      const existingPost = await Post.findOne({ title, user: user._id });
+      if (existingPost) {
+        throw new ApiError(
+          400,
+          "You have already created a post with the same title"
+        );
+      }
+    }
+    updatedPost.title = title;
+  } else {
+    updatedPost.title = post.title;
+  }
+
+  // Utility function to update properties
+  const updatePropertyIfProvided = (propertyName, newValue) => {
+    if (newValue !== undefined) {
+      // check for undefined instead of truthiness
+      updatedPost[propertyName] = newValue;
+    } else {
+      updatedPost[propertyName] = post[propertyName];
+    }
+  };
+
+  // Update other properties
+  updatePropertyIfProvided("description", description);
+  updatePropertyIfProvided("excerpt", excerpt);
+  updatePropertyIfProvided("isActive", Boolean(isActive));
+  updatePropertyIfProvided("isPublic", Boolean(isPublic));
+  updatePropertyIfProvided("featuredImage", featuredImage);
+
+  // Handle updating categories and tags if needed
+  if (category) {
+    updatedPost.category = category;
+  }
+
+  if (tags) {
+    // Split the tags string into an array of ObjectIds
+    const tagIds = tags
+      .split(",")
+      .map((tagId) => new mongoose.Types.ObjectId(tagId.trim()));
+    updatedPost.tags = tagIds;
+  }
+
+  // Update Post
+  const updatedPostDocument = await Post.findByIdAndUpdate(
+    postId,
+    updatedPost,
+    { new: true }
+  );
+
+  // Sending RESPONSE
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, updatedPostDocument, "Post updated successfully")
+    );
+});
 
 // Delete Post Controller
 export const deletePostController = asyncHandler(async (req, res) => {

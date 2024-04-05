@@ -26,12 +26,18 @@ router
   .post(
     verifyJWT,
     isAuthor,
-    postImagesUpload.fields([{ name: "featuredImage" }]),
+    postImagesUpload.single("featuredImage"),
     createPostController
   );
 router
   .route("/:_id")
-  .patch(verifyJWT, isAuthor, isAuthorized("Post"), updatePostController);
+  .patch(
+    verifyJWT,
+    isAuthor,
+    isAuthorized("Post"),
+    postImagesUpload.single("featuredImage"),
+    updatePostController
+  );
 router
   .route("/:_id")
   .delete(verifyJWT, isAuthor, isAuthorized("Post"), deletePostController);
