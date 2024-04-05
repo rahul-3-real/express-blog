@@ -35,5 +35,5 @@
 1. Get Posts (Done)
 2. Get Single Post (Done)
 3. Add Post (Done)
-4. Update Post (Pending)
+4. Update Post (Done)
 5. Remove Post (Done)
